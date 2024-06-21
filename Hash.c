@@ -125,6 +125,41 @@ int noComplLevel(HT* ht, float compl) {
 	return counter;
 }
 
+void freeTask(Task** t)
+{
+	free((*t)->date);
+	free((*t)->owner);
+	*t = NULL;
+}
+
+void freeList(Node** list)
+{
+	// traverse entire list and free Tasks + the node itself
+	while (*list)
+	{
+		Node* freeMe = *list;
+		*list = (*list)->next;
+		freeTask(&freeMe->info);
+		free(freeMe);
+	}
+	*list = NULL;
+}
+
+void freeHT(HT** ht)
+{
+	// free each bucket individually, then free the Hash Table and set it to NULL
+	for (int i = 0; i < (*ht)->dim; i++)
+	{
+		freeList(&(*ht)->vector[i]);
+	}
+
+	//free the buckets array
+	free((*ht)->vector);
+
+	//free the HashTable
+	free(*ht);
+	*ht = NULL;
+}
 
 
 int main() {
